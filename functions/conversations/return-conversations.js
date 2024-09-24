@@ -2,7 +2,7 @@
 
   return-all-variables.js
 
-  Retrun all system varialbles
+  Retrun all system variables
 
 */
 

@@ -31,6 +31,27 @@
   const webhooks = ref([]);
 
   const newChatMessage = ref("");
+
+// Close Conversation Method
+const closeConversation = async () => {
+  try {
+    let url = `${import.meta.env.VITE_DATA_URL}/conversations/close-conversation`;
+    const res = await fetch(url, {
+      method: "POST",
+      headers: { 'Content-type': 'application/json' },
+      body: JSON.stringify({ payload: { conversationSid: conversationId } })
+    });
+
+    if (res.ok) {
+      console.log("Conversation closed.");
+      conversationDetails.details.state = 'closed';  // Update the UI to reflect the closed state
+    } else {
+      console.error("Failed to close conversation");
+    }
+  } catch (e) {
+    console.error("Error closing conversation:", e);
+  }
+};
   
   const currentAgentSid = ref("");
   const addWH = ref(false);
@@ -523,6 +544,17 @@
             <h4 v-show="!addName" v-if="conversationDetails.details.friendlyName !== null" class="alert-heading">{{conversationDetails.details.friendlyName}}</h4>
             <h5 v-show="!addName" v-if="conversationDetails.details.friendlyName === null" class="alert-heading"><span class="fst-italic">no name...</span></h5>
           
+          </div>
+
+          <!-- Display the close conversation button only if the conversation is not already closed -->
+          <div v-if="conversationDetails.details.state !== 'closed'">
+            <button class="btn btn-warning mt-3" @click="closeConversation">
+              <i class="bi bi-x-circle"></i> Close Conversation
+            </button>
+          </div>
+
+          <div v-else>
+            <p>This conversation is closed.</p>
           </div>
         
           <div v-if="!inConversation">
